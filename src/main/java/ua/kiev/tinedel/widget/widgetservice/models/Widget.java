@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import java.time.Instant;
 import java.util.UUID;
 
 @SuppressWarnings("DefaultAnnotationParam")
@@ -16,10 +19,17 @@ public class Widget {
     @Builder.Default
     UUID id = UUID.randomUUID();
 
-    int x;
-    int y;
-    int z;
+    @NotNull(message = "X coordinate is required")
+    Integer x;
+    @NotNull(message = "Y coordinate is required")
+    Integer y;
+    @NotNull(message = "Z-index is required")
+    Integer zIndex;
 
+    @Positive(message = "Width should be positive")
     int width;
+    @Positive(message = "Height should be positive")
     int height;
+
+    Instant lastModifiedDate;
 }
