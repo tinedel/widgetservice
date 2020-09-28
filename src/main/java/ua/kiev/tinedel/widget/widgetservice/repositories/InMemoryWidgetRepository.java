@@ -24,7 +24,7 @@ public class InMemoryWidgetRepository implements WidgetRepository {
     }
 
     @Override
-    public Collection<Widget> findAllOrderByZIndexAsc() {
+    public List<Widget> findAllOrderByZIndexAsc() {
         try {
             lock.readLock().lock();
             return List.copyOf(zIndexIndex.values());
@@ -96,11 +96,11 @@ public class InMemoryWidgetRepository implements WidgetRepository {
         }
     }
 
-    private void acquireWriteLock() {
+    public void acquireWriteLock() {
         lock.writeLock().lock();
     }
 
-    private void releaseWriteLock() {
+    public void releaseWriteLock() {
         lock.writeLock().unlock();
     }
 }

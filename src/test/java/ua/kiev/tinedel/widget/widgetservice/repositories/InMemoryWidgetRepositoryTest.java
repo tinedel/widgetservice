@@ -2,8 +2,8 @@ package ua.kiev.tinedel.widget.widgetservice.repositories;
 
 import org.junit.jupiter.api.Test;
 import ua.kiev.tinedel.widget.widgetservice.models.Widget;
+import ua.kiev.tinedel.widget.widgetservice.utils.DataGenerator;
 
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static ua.kiev.tinedel.widget.widgetservice.utils.DataGenerator.buildWidget;
 
 class InMemoryWidgetRepositoryTest {
 
@@ -31,18 +32,6 @@ class InMemoryWidgetRepositoryTest {
                 .contains(widget);
 
         assertThat(widget.getId()).isNotNull();
-    }
-
-    private Widget buildWidget(UUID id) {
-        return Widget.builder()
-                .height(10)
-                .width(10)
-                .x(0)
-                .y(0)
-                .lastModifiedDate(Instant.now())
-                .zIndex(0)
-                .id(id)
-                .build();
     }
 
     @Test

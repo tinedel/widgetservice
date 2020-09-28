@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
 import java.time.Instant;
 import java.util.UUID;

@@ -6,9 +6,11 @@ import java.util.*;
 
 public interface WidgetRepository {
     Optional<Widget> getById(UUID id);
-    Collection<Widget> findAllOrderByZIndexAsc();
+    List<Widget> findAllOrderByZIndexAsc();
     Widget save(Widget widget);
     Optional<Widget> findByZIndex(int zIndex);
     int updateZIndexToMakeSpaceFor(int zIndex);
     void deleteById(UUID id);
+    void acquireWriteLock();
+    void releaseWriteLock();
 }
