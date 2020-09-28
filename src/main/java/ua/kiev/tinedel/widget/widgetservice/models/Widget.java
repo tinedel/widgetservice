@@ -3,6 +3,8 @@ package ua.kiev.tinedel.widget.widgetservice.models;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
@@ -13,11 +15,11 @@ import java.util.UUID;
 @SuppressWarnings("DefaultAnnotationParam")
 @FieldDefaults(makeFinal = false, level = AccessLevel.PRIVATE)
 @Data
+@Accessors(chain = true)
 @Builder
 public class Widget {
 
-    @Builder.Default
-    UUID id = UUID.randomUUID();
+    UUID id;
 
     @NotNull(message = "X coordinate is required")
     Integer x;
