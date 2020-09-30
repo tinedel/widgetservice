@@ -9,7 +9,7 @@
     </parent>
     <groupId>ua.kiev.tinedel.widget</groupId>
     <artifactId>widgetservice</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>widgetservice</name>
     <description>Widget REST service</description>
 
@@ -135,6 +135,6 @@
 
     <scm>
         <developerConnection>scm:git:git@github.com:tinedel/widgetservice.git</developerConnection>
-      <tag>widgetservice-1.0.0</tag>
+      <tag>HEAD</tag>
   </scm>
 </project>
