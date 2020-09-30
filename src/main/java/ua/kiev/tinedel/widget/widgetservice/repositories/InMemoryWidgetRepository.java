@@ -103,4 +103,15 @@ public class InMemoryWidgetRepository implements WidgetRepository {
     public void releaseWriteLock() {
         lock.writeLock().unlock();
     }
+
+    @Override
+    public void clear() {
+        try {
+            acquireWriteLock();
+            idIndex.clear();
+            zIndexIndex.clear();
+        } finally {
+            releaseWriteLock();
+        }
+    }
 }

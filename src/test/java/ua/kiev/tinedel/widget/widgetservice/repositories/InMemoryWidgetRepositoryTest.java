@@ -120,4 +120,17 @@ class InMemoryWidgetRepositoryTest {
         assertThat(wr.getById(w.getId())).isEmpty();
         assertThat(wr.findByZIndex(w.getZIndex())).isEmpty();
     }
+
+    @Test
+    void whenStorageIsCleaned_nothingRemains() {
+        List<Widget> widgets = Arrays.stream(new int[]{-1, 0, 1, 2, 4})
+                .mapToObj(it -> buildWidget(UUID.randomUUID()).setZIndex(it))
+                .collect(Collectors.toList());
+
+        WidgetRepository wr = new InMemoryWidgetRepository();
+        widgets.forEach(wr::save);
+
+        wr.clear();
+        assertThat(wr.findAllOrderByZIndexAsc()).isEmpty();
+    }
 }

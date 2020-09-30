@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ua.kiev.tinedel.widget.widgetservice.models.Widget;
 import ua.kiev.tinedel.widget.widgetservice.repositories.WidgetRepository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,13 +19,18 @@ public class WidgetService {
         try {
             repository.acquireWriteLock();
 
+            // remove widget first to avoid unnecessary zindex increments
+            if(widget.getId() != null) {
+                repository.deleteById(widget.getId());
+            }
+
             if (repository.findByZIndex(widget.getZIndex())
                     .filter(sameZIndex -> !sameZIndex.getId().equals(widget.getId()))
                     .isPresent()) {
                 repository.updateZIndexToMakeSpaceFor(widget.getZIndex());
             }
 
-            return repository.save(widget);
+            return repository.save(widget.withLastModifiedDate(Instant.now()));
         } finally {
             repository.releaseWriteLock();
         }

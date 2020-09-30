@@ -13,4 +13,5 @@ public interface WidgetRepository {
     void deleteById(UUID id);
     void acquireWriteLock();
     void releaseWriteLock();
+    void clear();
 }

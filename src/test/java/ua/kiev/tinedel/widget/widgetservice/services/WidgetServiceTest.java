@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static ua.kiev.tinedel.widget.widgetservice.utils.DataGenerator.buildWidget;
@@ -34,20 +35,21 @@ class WidgetServiceTest {
     @Test
     void whenSave_ZIndexIsChecked_andUpdated() {
         Widget toSave = buildWidget(UUID.randomUUID()).setZIndex(10);
-        Widget saved = buildWidget(toSave.getId());
 
         when(repository.findByZIndex(10)).thenReturn(Optional.of(buildWidget(UUID.randomUUID())));
-        when(repository.save(toSave)).thenReturn(saved);
+        when(repository.save(eq(toSave))).thenAnswer(inv -> inv.getArgument(0, Widget.class));
 
 
         Widget res = service.save(toSave);
 
-        assertThat(res).isSameAs(saved);
+        assertThat(res).isEqualTo(toSave);
+        assertThat(res.getLastModifiedDate()).isNotEqualTo(toSave.getLastModifiedDate());
 
         verify(repository).acquireWriteLock();
+        verify(repository).deleteById(toSave.getId());
         verify(repository).findByZIndex(10);
         verify(repository).updateZIndexToMakeSpaceFor(10);
-        verify(repository).save(toSave);
+        verify(repository).save(eq(toSave));
         verify(repository).releaseWriteLock();
 
         verifyNoMoreInteractions(repository);
@@ -67,10 +69,10 @@ class WidgetServiceTest {
         assertThat(res).isSameAs(saved);
 
         verify(repository).acquireWriteLock();
+        verify(repository).deleteById(toSave.getId());
         verify(repository).findByZIndex(10);
         verify(repository).save(toSave);
         verify(repository).releaseWriteLock();
-
         verifyNoMoreInteractions(repository);
     }
 
@@ -88,6 +90,7 @@ class WidgetServiceTest {
         assertThat(res).isSameAs(saved);
 
         verify(repository).acquireWriteLock();
+        verify(repository).deleteById(toSave.getId());
         verify(repository).findByZIndex(10);
         verify(repository).save(toSave);
         verify(repository).releaseWriteLock();
