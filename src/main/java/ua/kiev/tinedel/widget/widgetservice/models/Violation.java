@@ -1,9 +1,11 @@
 package ua.kiev.tinedel.widget.widgetservice.models;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
 @Builder
 public class Violation {
     String fieldName;
