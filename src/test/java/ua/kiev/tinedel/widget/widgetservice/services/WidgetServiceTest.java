@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static ua.kiev.tinedel.widget.widgetservice.utils.DataGenerator.buildWidget;
@@ -114,11 +113,11 @@ class WidgetServiceTest {
                 .mapToObj(zIndex -> buildWidget(UUID.randomUUID()).setZIndex(zIndex))
                 .collect(Collectors.toList());
 
-        when(repository.findAllOrderByZIndexAsc()).thenReturn(widgets);
+        when(repository.findAllOrderByZIndexAsc(24, 12)).thenReturn(widgets);
 
-        assertThat(service.findAll()).isEqualTo(widgets);
+        assertThat(service.findAll(12, 2)).isEqualTo(widgets);
 
-        verify(repository, only()).findAllOrderByZIndexAsc();
+            verify(repository, only()).findAllOrderByZIndexAsc(24, 12);
     }
 
     @Test

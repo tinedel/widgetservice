@@ -11,6 +11,8 @@ import ua.kiev.tinedel.widget.widgetservice.models.Widget;
 import ua.kiev.tinedel.widget.widgetservice.services.WidgetService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +25,13 @@ public class WidgetController {
     WidgetService service;
 
     @GetMapping()
-    public List<Widget> findAllWidgets() {
-        return service.findAll();
+    public List<Widget> findWidgets(
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10")
+            @Positive int pageSize,
+            @RequestParam(value = "pageNumber", required = false, defaultValue = "1")
+            @Positive int pageNumber
+    ) {
+        return service.findAll(pageSize, pageNumber - 1);
     }
 
     @GetMapping("/{id}")

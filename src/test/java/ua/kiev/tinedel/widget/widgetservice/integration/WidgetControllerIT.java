@@ -72,6 +72,48 @@ public class WidgetControllerIT {
 
     @Test
     @SneakyThrows
+    void widgetsOrderedByZIndexOnGetAndPageSizesAreRespected() {
+        List<Widget> widgets = Arrays.stream(new int[]{-1, 0, 1, 2, 4})
+                .mapToObj(it -> buildWidget(null).setZIndex(it))
+                .collect(Collectors.toList());
+
+        widgets.forEach(repository::save);
+
+
+        mockMvc.perform(get("/widgets?pageSize=2&pageNumber=2"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(widgets.subList(2, 4)), true));
+    }
+
+    @Test
+    @SneakyThrows
+    void widgetsOrderedByZIndexOnGetAndPageSizesAreRespectedIfTooFarThanEmpty() {
+        List<Widget> widgets = Arrays.stream(new int[]{-1, 0, 1, 2, 4})
+                .mapToObj(it -> buildWidget(null).setZIndex(it))
+                .collect(Collectors.toList());
+
+        widgets.forEach(repository::save);
+
+
+        mockMvc.perform(get("/widgets?pageSize=2&pageNumber=20"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    @SneakyThrows
+    void pageSizeAndNumberAreValidated() {
+        String[] violatedParams = {"pageSize", "pageNumber"};
+        mockMvc.perform(get("/widgets?pageSize=0&pageNumber=-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.violations[*].fieldName").value(Matchers.containsInAnyOrder(
+                        getFieldsFullNames(violatedParams, FIND_WIDGET_PARAMETERS_PREFIX)
+                )));
+    }
+
+    @Test
+    @SneakyThrows
     void widgetsInsertShiftsOthersWidgets() {
         List<Widget> widgets = Arrays.stream(new int[]{-1, 0, 1, 2, 4})
                 .mapToObj(it -> buildWidget(null).setZIndex(it))
@@ -171,6 +213,7 @@ public class WidgetControllerIT {
     }
 
     static final String POST_FIELD_PREFIX = "create.widget.";
+    static final String FIND_WIDGET_PARAMETERS_PREFIX = "findWidgets.";
     static final String PUT_FIELD_PREFIX = "update.widget.";
 
     private String[] getFieldsFullNames(String[] violatedFields, String postFieldPrefix) {
@@ -182,6 +225,7 @@ public class WidgetControllerIT {
     void requiredFieldsAreValidatedOnPostNoIdValidated() {
         String[] violatedFields = {"x", "y", "zIndex", "width", "height"};
         mockMvc.perform(post("/widgets").contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.violations[*].fieldName").value(Matchers.containsInAnyOrder(
                         getFieldsFullNames(violatedFields, POST_FIELD_PREFIX)
                 )));
@@ -193,6 +237,7 @@ public class WidgetControllerIT {
         String[] violatedFields = {"id"};
         mockMvc.perform(post("/widgets").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(buildWidget(UUID.randomUUID()))))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.violations[*].fieldName").value(Matchers.containsInAnyOrder(
                         getFieldsFullNames(violatedFields, POST_FIELD_PREFIX)
                 )));

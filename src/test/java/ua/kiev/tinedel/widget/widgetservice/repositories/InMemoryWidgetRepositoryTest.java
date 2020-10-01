@@ -2,7 +2,6 @@ package ua.kiev.tinedel.widget.widgetservice.repositories;
 
 import org.junit.jupiter.api.Test;
 import ua.kiev.tinedel.widget.widgetservice.models.Widget;
-import ua.kiev.tinedel.widget.widgetservice.utils.DataGenerator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -91,7 +90,7 @@ class InMemoryWidgetRepositoryTest {
 
         assertThat(wr.updateZIndexToMakeSpaceFor(0)).isEqualTo(0);
 
-        assertThat(wr.findAllOrderByZIndexAsc().stream().map(Widget::getZIndex)).containsSequence(-1, 1);
+        assertThat(wr.findAllOrderByZIndexAsc(0, 10).stream().map(Widget::getZIndex)).containsSequence(-1, 1);
     }
 
     @Test
@@ -106,7 +105,8 @@ class InMemoryWidgetRepositoryTest {
 
         assertThat(wr.updateZIndexToMakeSpaceFor(0)).isEqualTo(3);
 
-        assertThat(wr.findAllOrderByZIndexAsc().stream().map(Widget::getZIndex)).containsSequence(-1, 1, 2, 3, 4);
+        assertThat(wr.findAllOrderByZIndexAsc(0, 10).stream()
+                .map(Widget::getZIndex)).containsSequence(-1, 1, 2, 3, 4);
     }
 
     @Test
@@ -131,6 +131,20 @@ class InMemoryWidgetRepositoryTest {
         widgets.forEach(wr::save);
 
         wr.clear();
-        assertThat(wr.findAllOrderByZIndexAsc()).isEmpty();
+        assertThat(wr.findAllOrderByZIndexAsc(0, 10)).isEmpty();
+    }
+
+    @Test
+    void whenOffsetAndLimitProvided_theyAreRespecter() {
+        List<Widget> widgets = Arrays.stream(new int[]{-1, 0, 1, 2, 4})
+                .mapToObj(it -> buildWidget(UUID.randomUUID()).setZIndex(it))
+                .collect(Collectors.toList());
+
+        WidgetRepository wr = new InMemoryWidgetRepository();
+        widgets.forEach(wr::save);
+
+        assertThat(wr.findAllOrderByZIndexAsc(1, 2).stream().map(Widget::getZIndex))
+                .hasSize(2)
+                .containsSequence(0, 1);
     }
 }

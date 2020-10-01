@@ -40,8 +40,9 @@ public class WidgetService {
         return repository.getById(id);
     }
 
-    public List<Widget> findAll() {
-        return repository.findAllOrderByZIndexAsc();
+    public List<Widget> findAll(int pageSize, int pageNumber) {
+        int offset = pageNumber * pageSize;
+        return repository.findAllOrderByZIndexAsc(offset, pageSize);
     }
 
     public void deleteById(UUID id) {

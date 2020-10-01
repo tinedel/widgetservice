@@ -5,6 +5,7 @@ import ua.kiev.tinedel.widget.widgetservice.models.Widget;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 @Service
 public class InMemoryWidgetRepository implements WidgetRepository {
@@ -24,10 +25,10 @@ public class InMemoryWidgetRepository implements WidgetRepository {
     }
 
     @Override
-    public List<Widget> findAllOrderByZIndexAsc() {
+    public List<Widget> findAllOrderByZIndexAsc(int offset, int limit) {
         try {
             lock.readLock().lock();
-            return List.copyOf(zIndexIndex.values());
+            return zIndexIndex.values().stream().skip(offset).limit(limit).collect(Collectors.toUnmodifiableList());
         } finally {
             lock.readLock().unlock();
         }
