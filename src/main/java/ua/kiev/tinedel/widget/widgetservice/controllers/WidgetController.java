@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ua.kiev.tinedel.widget.widgetservice.models.CreateValidationGroup;
 import ua.kiev.tinedel.widget.widgetservice.models.UpdateValidationGroup;
 import ua.kiev.tinedel.widget.widgetservice.models.Widget;
+import ua.kiev.tinedel.widget.widgetservice.rtree.MBRectangle;
 import ua.kiev.tinedel.widget.widgetservice.services.WidgetService;
 
 import javax.validation.Valid;
@@ -32,6 +33,11 @@ public class WidgetController {
             @Positive int pageNumber
     ) {
         return service.findAll(pageSize, pageNumber - 1);
+    }
+
+    @PostMapping("/search")
+    public List<Widget> findWidgets(@RequestBody MBRectangle boundingBox) {
+        return service.findInBoundingBox(boundingBox);
     }
 
     @GetMapping("/{id}")
